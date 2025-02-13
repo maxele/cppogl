@@ -32,21 +32,24 @@ int compileShader(int program, const char *filename, GLenum shaderType) {/*{{{*/
 class ShaderProgram
 {
 public:
-	ShaderProgram(string vertex, string fragment);
+	ShaderProgram(string vertex, string fragment, bool verbose);
 	~ShaderProgram();
 	bool setUniform1f(string name, float var);
 	bool setUniformMatrix4fv(string name, float var[4*4]);
 	bool setUniform3fv(string name, float var[3]);
 	void use();
 	int _program = 0;
+	bool _verbose;
 };
 
-ShaderProgram::ShaderProgram(string vertex, string fragment) {/*{{{*/
+ShaderProgram::ShaderProgram(string vertex, string fragment, bool verbose = false) {/*{{{*/
 	INFO("compiling shaderProgram vert: '%s', frag: '%s'\n", vertex.c_str(), fragment.c_str());
 	int program = 0;
 	int fragment_shader = 0;
 	int vertex_shader = 0;
 	int status, len;
+
+	_verbose = verbose;
 
 	// shaders program
 	program = glCreateProgram();
@@ -107,7 +110,7 @@ void ShaderProgram::use() {
 
 bool ShaderProgram::setUniform3fv(string name, float var[3]) {
 	int location = glGetUniformLocation(_program, name.c_str());
-	if (location == -1) {
+	if (_verbose && location == -1) {
 		WARNING("Couldn't find '%s' in shader program\n", name.c_str());
 		return false;
 	}
@@ -117,7 +120,7 @@ bool ShaderProgram::setUniform3fv(string name, float var[3]) {
 
 bool ShaderProgram::setUniform1f(string name, float var) {
 	int location = glGetUniformLocation(_program, name.c_str());
-	if (location == -1) {
+	if (_verbose && location == -1) {
 		WARNING("Couldn't find '%s' in shader program\n", name.c_str());
 		return false;
 	}
@@ -127,7 +130,7 @@ bool ShaderProgram::setUniform1f(string name, float var) {
 
 bool ShaderProgram::setUniformMatrix4fv(string name, float var[4*4]) {
 	int location = glGetUniformLocation(_program, name.c_str());
-	if (location == -1) {
+	if (_verbose && location == -1) {
 		WARNING("Couldn't find '%s' in shader program\n", name.c_str());
 		return false;
 	}

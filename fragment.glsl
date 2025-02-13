@@ -1,6 +1,7 @@
 #version 330
 
-in vec3 ourColor;
+in vec3 ourPos;
+in float ourTime;
 
 layout (location=0) out vec4 color;
 
@@ -26,7 +27,17 @@ vec3 hsv2rgb(vec3 c)
     return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
 }
 
+float sum(vec3 v) {
+	return v.x + v.y + v.z;
+}
+
 void main() {
 	// color = vec4((vec3((pos.x+pos.y)/2, pos.y, pos.x)), 1.0);
-	color = vec4(ourColor, 1.0);
+	vec3 P = ourPos;
+	if (ourPos.x > 0) P.x *= -1;
+	P = P - vec3(-.5, .0, 0);
+	float d = sqrt(sum(P*P));
+	float v = abs(sin(d*10 + ourTime/500));
+	vec3 c = vec3(v);
+	color = vec4(c, 1);
 }

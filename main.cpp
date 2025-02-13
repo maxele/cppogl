@@ -75,6 +75,9 @@ int main() {
 	ebo.loadData(indices.size()*sizeof(GLuint), (void**)&indices[0], GL_STATIC_DRAW);
 
 	while (!sdl._quit) {
+		if (sdl._keys[SDLK_q]) {
+			sdl._quit = true;
+		}
 		sdl.updateWindowSize();
 		sdl.handleEvents();
 		sdl.clear();

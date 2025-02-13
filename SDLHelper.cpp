@@ -1,3 +1,5 @@
+#define NR_KEY_CODES SDLK_ENDCALL+1
+
 class SDLHelper
 {
 public:
@@ -6,13 +8,18 @@ public:
 	void *_gl_context;
 	int _width = 640;
 	int _height = 480;
+	bool *_keys;
 	status init();
+	SDLHelper();
 	~SDLHelper();
 	void handleEvents();
 	void clear();
 	void updateWindowSize();
 	void swapWindows();
 };
+SDLHelper::SDLHelper() {
+	_keys = (bool*)malloc(NR_KEY_CODES * sizeof(bool));
+}
 status SDLHelper::init() {
 	INFOLN("Initializing sdl");
 	SDL_Init(SDL_INIT_VIDEO);
@@ -49,6 +56,7 @@ SDLHelper::~SDLHelper() {
 	/* glfwQuit(); */
 	SDL_Quit();
 	INFOLN("Uninitialized sdl");
+	free(_keys);
 }
 void SDLHelper::handleEvents() {
 	SDL_Event event;
@@ -57,12 +65,12 @@ void SDLHelper::handleEvents() {
 			case SDL_QUIT:
 				_quit = true;
 				break;
-			/* case SDL_KEYDOWN: */
-			/* 	pressed_keys[event.key.keysym.sym] = 1; */
-			/* 	break; */
-			/* case SDL_KEYUP: */
-			/* 	pressed_keys[event.key.keysym.sym] = 0; */
-			/* 	break; */
+			case SDL_KEYDOWN:
+				_keys[event.key.keysym.sym] = 1;
+				break;
+			case SDL_KEYUP:
+				_keys[event.key.keysym.sym] = 0;
+				break;
 		}
 	}
 }

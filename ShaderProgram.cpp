@@ -1,11 +1,11 @@
 int compileShader(int program, const char *filename, GLenum shaderType) {/*{{{*/
-	INFO("compiling shader from file '%s'\n", filename);
+	/* INFO("compiling shader from file '%s'\n", filename); */
 	string sourceStr = read_file(filename);
 	const char *source = sourceStr.c_str();
 	if (!source) return 1;
 
 	int shader;
-	int len = strlen(source);
+	int len = sourceStr.length();
 	int status;
 
 	shader = glCreateShader(shaderType);
@@ -38,18 +38,25 @@ public:
 	bool setUniformMatrix4fv(string name, float var[4*4]);
 	bool setUniform3fv(string name, float var[3]);
 	void use();
+	void recompile();
 	int _program = 0;
 	bool _verbose;
+	string _vertex, _fragment;
 };
 
-ShaderProgram::ShaderProgram(string vertex, string fragment, bool verbose = false) {/*{{{*/
-	INFO("compiling shaderProgram vert: '%s', frag: '%s'\n", vertex.c_str(), fragment.c_str());
+ShaderProgram::ShaderProgram(string vertex, string fragment, bool verbose = false) {
+	_verbose = verbose;
+	_vertex = vertex;
+	_fragment = fragment;
+	recompile();
+}
+
+void ShaderProgram::recompile() {/*{{{*/
+	INFO("compiling shaderProgram vert: '%s', frag: '%s'\n", _vertex.c_str(), _fragment.c_str());
 	int program = 0;
 	int fragment_shader = 0;
 	int vertex_shader = 0;
 	int status, len;
-
-	_verbose = verbose;
 
 	// shaders program
 	program = glCreateProgram();
@@ -58,13 +65,13 @@ ShaderProgram::ShaderProgram(string vertex, string fragment, bool verbose = fals
 		goto abort;
 	}
 
-	vertex_shader = compileShader(program, vertex.c_str(), GL_VERTEX_SHADER);
+	vertex_shader = compileShader(program, _vertex.c_str(), GL_VERTEX_SHADER);
 	if (!vertex_shader) {
 		ERRORLN("Failed to compile vertex shader");
 		goto abort;
 	}
 
-	fragment_shader = compileShader(program, fragment.c_str(), GL_FRAGMENT_SHADER);
+	fragment_shader = compileShader(program, _fragment.c_str(), GL_FRAGMENT_SHADER);
 	if (!fragment_shader) {
 		ERRORLN("Failed to compile fragment shader");
 		goto abort;
@@ -96,8 +103,6 @@ ShaderProgram::ShaderProgram(string vertex, string fragment, bool verbose = fals
 abort:
 	if (vertex_shader) glDeleteShader(vertex_shader);
 	if (fragment_shader) glDeleteShader(fragment_shader);
-	if (program) glDeleteProgram(program);
-	_program = 0;
 }/*}}}*/
 
 ShaderProgram::~ShaderProgram() {

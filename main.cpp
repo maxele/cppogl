@@ -49,7 +49,10 @@ int main() {
 
 	while (!sdl._quit) {
 		shader.setUniform1f("uTime", SDL_GetTicks());
-		if (sdl._keys[SDLK_q]) {
+		if (sdl._keys[SDLK_r]) {
+			shader.recompile();
+			sdl._keys[SDLK_r] = false;
+		} else if (sdl._keys[SDLK_q]) {
 			sdl._quit = true;
 		}
 		sdl.updateWindowSize();

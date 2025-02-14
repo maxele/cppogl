@@ -33,11 +33,12 @@ float sum(vec3 v) {
 
 void main() {
 	// color = vec4((vec3((pos.x+pos.y)/2, pos.y, pos.x)), 1.0);
-	vec3 P = ourPos;
-	if (ourPos.x > 0) P.x *= -1;
-	P = P - vec3(-.5, .0, 0);
+	vec3 P = fract(ourPos*1.1 * 2);
+	// if (ourPos.x > 0) P.x *= -1;
+	// if (ourPos.y > 0) P.y *= -1;
+	P = P - vec3(+.5, +.5, 0);
 	float d = sqrt(sum(P*P));
-	float v = abs(sin(d*10 + ourTime/500));
-	vec3 c = vec3(v);
+	float v = abs(sin(d*5 + ourTime/500));
+	vec3 c = vec3(v, sin(ourTime/5000), d);
 	color = vec4(c, 1);
 }

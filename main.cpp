@@ -1,11 +1,14 @@
-#include <SDL2/SDL.h>
-#include <GL/glew.h>
-#include <GL/gl.h>
-
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <vector>
+
+#include <SDL2/SDL.h>
+#include <GL/glew.h>
+#include <GL/gl.h>
+
+#include <ft2build.h>
+#include FT_FREETYPE_H
 
 typedef int status;
 
@@ -16,6 +19,8 @@ using namespace std;
 #include "./ShaderProgram.cpp"
 #include "./BufferObject.cpp"
 #include "./SDLHelper.cpp"
+#include "./Texture.cpp"
+#include "./TTFHelper.cpp"
 
 int main() {
 	SDLHelper sdl;
@@ -23,14 +28,21 @@ int main() {
 		return 1;
 	}
 
+	TTFHelper ttf;
+	if (!ttf._face) {
+		return 1;
+	}
+	ttf.setPixelSize(500, 0);
+	Texture character = ttf.renderC('k');
+
 	ShaderProgram shader("./vertex.glsl", "./fragment.glsl");
 	if (!shader._program) {
 		ERRORLN("Failed to create ShaderProgram");
 		return 1;
 	}
 	shader.use();
-	shader.setUniform1f("uRatio", (float)sdl._width / sdl._height);
-	shader.setUniform1f("uTime", 0);
+	shader.setUniform1f("uRatio", 1.);
+	shader.setUniform1f("uTime", 0.);
 
 	vector<float> vertices = {
 		+0.9, +0.9, 0, 1, 0,
@@ -61,9 +73,11 @@ int main() {
 
 		// draw rectangle {{{
 		shader.use();
-		shader.setUniform1f("uRatio", (float)sdl._width / sdl._height);
+		shader.setUniform1f("uRatio", (float)sdl._width / sdl._height
+		      * (float)character._height / character._width);
 		vbo.bind();
 		ebo.bind();
+		character.bind();
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5*sizeof(float), (void*)0);

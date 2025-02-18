@@ -1,9 +1,12 @@
 #version 330
 
-in vec3 ourPos;
-in float ourTime;
+// in vec3 ourPos;
+// in float ourTime;
+in vec2 oUv;
 
 layout (location=0) out vec4 color;
+
+uniform sampler2D oTexture;
 
 // All components are in the range [0…1], including hue.
 vec3 rgb2hsv(vec3 c)
@@ -32,21 +35,6 @@ float sum(vec3 v) {
 }
 
 void main() {
-	// color = vec4((vec3((pos.x+pos.y)/2, pos.y, pos.x)), 1.0);
-	vec3 P = fract(ourPos*1.1 * 2);
-	// if (ourPos.x > 0) P.x *= -1;
-	// if (ourPos.y > 0) P.y *= -1;
-	P = P - vec3(+.5, +.5, 0);
-	float n = 2.;
-	vec3 c = vec3(0);
-
-	for (float i = 0.; i < n; i++) {
-		float d = sqrt(sum(P*P)) * (i+1);
-		float v = abs(sin(d*5 + ourTime/500));
-		vec3 dc = vec3(v, .3, d);
-		c += dc;
-	}
-	c /= n;
-
-	color = vec4(c, 1);
+	vec4 t = texture(oTexture, oUv);
+	color = vec4(vec3(t.r), 1.0);;
 }

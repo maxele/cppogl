@@ -32,6 +32,7 @@ int compileShader(int program, const char *filename, GLenum shaderType) {/*{{{*/
 class ShaderProgram
 {
 public:
+	ShaderProgram() {};
 	ShaderProgram(string vertex, string fragment, bool verbose);
 	~ShaderProgram();
 	bool setUniform1f(string name, float var);
@@ -39,6 +40,7 @@ public:
 	bool setUniform3fv(string name, float var[3]);
 	void use();
 	void recompile();
+	int getUniformLocation(string name);
 	int _program = 0;
 	bool _verbose;
 	string _vertex, _fragment;
@@ -107,6 +109,10 @@ abort:
 
 ShaderProgram::~ShaderProgram() {
 	glDeleteShader(_program);
+}
+
+int ShaderProgram::getUniformLocation(string name) {
+	return glGetUniformLocation(_program, name.c_str());
 }
 
 void ShaderProgram::use() {

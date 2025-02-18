@@ -3,7 +3,6 @@ class Texture
 public:
 	unsigned int _texture;
 	int _width, _height;
-	int _top, _left;
 	Texture() {
 		_texture = 0;
 	}
@@ -11,8 +10,6 @@ public:
 		/* INFO("pitch: %d\n", glyph->pitch); */
 		_width = glyph->bitmap.width;
 		_height = glyph->bitmap.rows;
-		_top = glyph->bitmap_top;
-		_left = glyph->bitmap_left;
 		bind();
 		glCreateTextures(GL_TEXTURE_2D,1, &_texture);
 		glTextureStorage2D(_texture, 1, GL_R8, glyph->bitmap.width, glyph->bitmap.rows);

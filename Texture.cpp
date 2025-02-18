@@ -4,6 +4,9 @@ public:
 	unsigned int _texture;
 	int _width, _height;
 	int _top, _left;
+	Texture() {
+		_texture = 0;
+	}
 	Texture(FT_GlyphSlot glyph) {
 		/* INFO("pitch: %d\n", glyph->pitch); */
 		_width = glyph->bitmap.width;

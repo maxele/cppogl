@@ -35,6 +35,7 @@ float sum(vec3 v) {
 }
 
 void main() {
-	vec4 t = texture(oTexture, oUv);
-	color = vec4(vec3(t.r), 1.0);;
+	vec4 t = vec4(vec3(1.0), texture(oTexture, oUv).r);
+	vec4 c = vec4(0.3, .4, .9, 1.0);
+	color = c * t;
 }

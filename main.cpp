@@ -32,8 +32,11 @@ int main() {
 	if (!ttf._face) {
 		return 1;
 	}
-	ttf.setPixelSize(500, 0);
-	Texture character = ttf.renderC('k');
+	ttf.setPixelSize(0, sdl._height*.9);
+	Texture character = ttf.renderC('M');
+	if (!character._texture) {
+		return 1;
+	}
 
 	ShaderProgram shader("./vertex.glsl", "./fragment.glsl");
 	if (!shader._program) {

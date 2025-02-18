@@ -12,7 +12,7 @@ public:
 			return;
 		}
 		int error = FT_New_Face( _library,
-			  "/usr/share/fonts/TTF/Monoid Bold Nerd Font Complete Mono.ttf",
+			  "/usr/share/fonts/TTF/VictorMonoNerdFont-Medium.ttf",
 		      0,
 		      &_face );
 		if ( error == FT_Err_Unknown_File_Format )
@@ -25,23 +25,21 @@ public:
 			ERRORLN("the font file could not be opened or read, or it is broken");
 			return;
 		}
-		if (setPixelSize(32, 0)) {
+		if (setPixelSize(0, 48)) {
 			return;
 		}
 
 	}
+	~TTFHelper() {
+		FT_Done_Face(_face);
+		FT_Done_FreeType(_library);
+	}
 	Texture renderC(unsigned int charcode) {
 		int glyph_index = FT_Get_Char_Index( _face, charcode );
-		int load_flags = 0;
-		int error = FT_Load_Glyph(
-			_face,          /* handle to face object */
-			glyph_index,   /* glyph index           */
-			load_flags );  /* load flags, see below */
+		int error = FT_Load_Char(_face, charcode, FT_LOAD_RENDER);
 		if (error) {
-			ERRORLN("failed to load glyph");
+			return Texture(); // return empty texture
 		}
-		error = FT_Render_Glyph( _face->glyph,   /* glyph slot  */
-			  FT_RENDER_MODE_NORMAL ); /* render mode */
 		Texture t(_face->glyph);
 		return t;
 	}

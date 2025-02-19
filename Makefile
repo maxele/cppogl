@@ -7,6 +7,8 @@ SRCFILES := *.cpp
 
 $(EXENAME): $(SRCFILES)
 	g++ -g -o $(EXENAME) main.cpp $(LIBS)
+$(EXENAME)-debug: $(SRCFILES)
+	g++ -g -o $(EXENAME)-debug main.cpp $(LIBS) -g
 
 .PHONY: run tags clean
 run: $(EXENAME)

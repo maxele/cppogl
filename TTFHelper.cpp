@@ -7,12 +7,17 @@ public:
 		Texture _texture;
 		unsigned int _size[2];
 		int _bearing[2];
-		long int _advance[2];
+		signed long int _advance[2];
+		~Character() {
+			INFO("Free (%d)\n", _texture._texture);
+			if (_texture._texture)
+				glDeleteTextures(1, &_texture._texture);
+		}
 	};
 
 	FT_Library _library;
 	FT_Face _face = 0;
-	Character _characters[128];
+	Character *_characters[128];
 	ShaderProgram _shader;
 	TTFHelper();
 	int setPixelSize(int w, int h);
@@ -22,9 +27,9 @@ public:
 		return _shader.getUniformLocation(name);
 	}
 	void setupShader(int x, int y, char c) {
-		_characters[c]._texture.bind();
-		glUniform2f(getLocation("uSize"), _characters[c]._size[0], _characters[c]._size[1]);
-		glUniform2f(getLocation("uBearing"), _characters[c]._bearing[0], _characters[c]._bearing[1]);
+		_characters[c]->_texture.bind();
+		glUniform2f(getLocation("uSize"), _characters[c]->_size[0], _characters[c]->_size[1]);
+		glUniform2f(getLocation("uBearing"), _characters[c]->_bearing[0], _characters[c]->_bearing[1]);
 		glUniform2f(getLocation("uPosition"), (float)x, (float)y);
 	}
 };
@@ -74,12 +79,12 @@ bool TTFHelper::loadChars() {
 			INFO("Failed to load char '%c' (%d)\n", c);
 			return true;
 		}
-		_characters[c] = {
+		_characters[c] = new Character({
 			Texture(_face->glyph),
 			{_face->glyph->bitmap.width, _face->glyph->bitmap.rows},
 			{_face->glyph->bitmap_left, _face->glyph->bitmap_top},
-			{_face->glyph->advance.x, _face->glyph->advance.y},
-		};
+			{_face->glyph->advance.x >> 6, _face->glyph->advance.y >> 6},
+		});
 	}
 	return false;
 }

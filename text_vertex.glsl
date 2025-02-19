@@ -11,11 +11,13 @@ uniform vec2 uPosition;
 out vec2 oUv;
 
 void main() {
-	vec2 p = pos.xy;
-	// p.x = p.x / uResolution.x * uResolution.y;
-	p = p / uResolution * uSize;
-	p += uPosition / uResolution;
-	p = p *vec2(2) - vec2(.5, 0);
+	vec2 p = pos.xy * uResolution;
+	p.x = p.x / uResolution.x * uResolution.y;
+	p.x = p.x / uSize.y * uSize.x;
+	p = p * vec2(uSize.y / uResolution.y);
+	p += uPosition;
+	p.y = p.y - uSize.y + uBearing.y;
+	p = p / uResolution * 2 - vec2(1);
 	gl_Position = vec4(p, 0, 1);
 	oUv = uv;
 }

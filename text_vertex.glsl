@@ -16,7 +16,7 @@ void main() {
 	p.x = p.x / uSize.y * uSize.x;
 	p = p * vec2(uSize.y / uResolution.y);
 	p += uPosition;
-	p.y = p.y - uSize.y + uBearing.y;
+	p.y -= uSize.y;
 	p = p / uResolution * 2 - vec2(1);
 	gl_Position = vec4(p, 0, 1);
 	oUv = uv;

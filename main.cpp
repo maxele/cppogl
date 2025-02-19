@@ -28,56 +28,6 @@ void setUniforms(TTFHelper &ttf, int w, int h) {
 	glUniform2f(ttf.getLocation("uResolution"), (float)w, (float)h);
 }
 
-int font_size = 50;
-void cli_puts(TTFHelper &ttf, string s, int *w, int *h) {
-	for (char c : s) {
-		if (c == '\n') {
-			*h = *h + font_size;
-			*w = 10;
-			continue;
-		}
-		ttf.setupShader(*w, *h, c);
-		*w += ttf._characters[c]->_advance[0];
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-	}
-}
-
-void cli_handle_events(TTFHelper &ttf, string &inputBuffer, string &logBuffer, bool *quit) {
-	SDL_Event event;
-	while (SDL_PollEvent(&event)) {
-		if (event.type == SDL_KEYDOWN) {
-			char c = event.key.keysym.sym;
-			if (c == 13) { // newline
-				if (inputBuffer == "quit") {
-					*quit = true;
-				} else if (inputBuffer == "clear") {
-					logBuffer.clear();
-					inputBuffer.clear();
-					continue;
-				} else if (inputBuffer.rfind("resize ", 0) == 0) {
-					inputBuffer.erase(inputBuffer.begin(), inputBuffer.begin()+7);
-					ttf.setPixelSize(0, stoi(inputBuffer.c_str()));
-					font_size = stoi(inputBuffer.c_str())*1.2;
-					if (ttf.loadChars()) {
-						inputBuffer = "Error: Failed to resize chars";
-					} else {
-						inputBuffer = "Info: Resized chars to " + inputBuffer;
-					}
-				}
-				inputBuffer.append(1, '\n');
-				inputBuffer.append(logBuffer);
-				logBuffer = inputBuffer;
-				inputBuffer = "";
-			} else if (c == 8) { // backspace
-				if (!inputBuffer.empty())
-					inputBuffer.pop_back();
-			} else if (c > 0 && c < 128) {
-				inputBuffer.append(1, c);
-			}
-		}
-	}
-}
-
 int main() {
 	SDLHelper sdl;
 	if (sdl.init()) {

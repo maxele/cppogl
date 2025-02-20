@@ -7,7 +7,6 @@ public:
 	~BufferObject();
 	void loadData(int count, void **data, GLenum usage);
 	void bind();
-	void draw(GLsizei count);
 };
 BufferObject::BufferObject(GLenum type) {
 	_type = type;

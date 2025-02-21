@@ -10,7 +10,7 @@ $(EXENAME): $(SRCFILES)
 $(EXENAME)-debug: $(SRCFILES)
 	g++ -g -o $(EXENAME)-debug main.cpp $(LIBS) -g
 
-.PHONY: run tags clean
+.PHONY: run tags clean test
 run: $(EXENAME)
 	./$(EXENAME)
 libTags: $(TAGGED_LIBS)
@@ -20,3 +20,6 @@ tags: libTags $(SRCFILES)
 	ctags -a -R .
 clean:
 	rm -f $(EXENAME) tags libTags
+test: test.cpp lib.hpp lib.cpp
+	g++ -o $(EXENAME) test.cpp lib.cpp $(LIBS)
+	./$(EXENAME)
